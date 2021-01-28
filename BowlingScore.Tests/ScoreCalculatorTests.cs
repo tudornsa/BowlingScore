@@ -38,5 +38,34 @@ namespace BowlingScore.Tests
             Assert.Equal(expectedTotal, total);
         }
 
+        [Fact]
+        public void CalculateScore_JustStrikesTotalScore_ReturnSuccess()
+        {
+            var expectedTotal = 300;
+            var inputFilePath = @"./TestInputJustStrikes.txt";
+            InputReader reader = new InputReader();
+            ScoreCalculator calculator = new ScoreCalculator(reader, inputFilePath);
+
+            //act
+            var total = calculator.CalculateScore();
+
+            //assert
+            Assert.Equal(expectedTotal, total);
+        }
+
+        [Fact]
+        public void CalculateScore_SpareExtraThrowLastFrame_ReturnSuccess()
+        {
+            var expectedTotal = 270;
+            var inputFilePath = @"./TestInputSpareLastFrame.txt";
+            InputReader reader = new InputReader();
+            ScoreCalculator calculator = new ScoreCalculator(reader, inputFilePath);
+
+            //act
+            var total = calculator.CalculateScore();
+
+            //assert
+            Assert.Equal(expectedTotal, total);
+        }
     }
 }

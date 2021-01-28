@@ -15,7 +15,7 @@ namespace BowlingScore
          Also easier to unit test this functionality
         */
         public string RawInput { get; set; }
-        public string[] ThrowArray { get; set; } // TODO: Find better name!
+        public string[] ThrowsArray { get; set; } // TODO: Find better name!
         private static string ReadRawInput(string filePath) // Get raw input as string
         {
             return File.ReadAllText(filePath);
@@ -26,14 +26,14 @@ namespace BowlingScore
             return Regex.Replace(input, @"\s+", "");
         }
 
-        public string[] GetThrowArray(string filePath) // Do stuff with input
+        public string[] GetThrowsArray(string filePath) // Do stuff with input
         {
             var rawInput = ReadRawInput(filePath);
             var rawInputNoSpaces = RemoveWhiteSpace(rawInput);
             //Console.WriteLine(rawInputNoSpaces);
             RawInput = rawInputNoSpaces;
-            ThrowArray = rawInputNoSpaces.Split(',');
-            return ThrowArray;
+            ThrowsArray = rawInputNoSpaces.Split(',');
+            return ThrowsArray;
         }
     }
 }
