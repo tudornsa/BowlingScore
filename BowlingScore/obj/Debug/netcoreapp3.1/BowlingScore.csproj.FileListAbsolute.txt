@@ -1,0 +1,15 @@
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\bin\Debug\netcoreapp3.1\BowlingScore.exe
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\bin\Debug\netcoreapp3.1\BowlingScore.deps.json
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\bin\Debug\netcoreapp3.1\BowlingScore.runtimeconfig.json
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\bin\Debug\netcoreapp3.1\BowlingScore.runtimeconfig.dev.json
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\bin\Debug\netcoreapp3.1\BowlingScore.dll
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\bin\Debug\netcoreapp3.1\BowlingScore.pdb
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\obj\Debug\netcoreapp3.1\BowlingScore.csprojAssemblyReference.cache
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\obj\Debug\netcoreapp3.1\BowlingScore.AssemblyInfoInputs.cache
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\obj\Debug\netcoreapp3.1\BowlingScore.AssemblyInfo.cs
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\obj\Debug\netcoreapp3.1\BowlingScore.csproj.CoreCompileInputs.cache
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\obj\Debug\netcoreapp3.1\BowlingScore.dll
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\obj\Debug\netcoreapp3.1\BowlingScore.pdb
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\obj\Debug\netcoreapp3.1\BowlingScore.genruntimeconfig.cache
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\bin\Debug\netcoreapp3.1\input.txt
+C:\Users\t.ioneasa\source\repos\BowlingScore\BowlingScore\bin\Debug\netcoreapp3.1\strikeInput.txt
