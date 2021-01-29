@@ -2,6 +2,6 @@
 {
     public interface IInputReader
     {
-        public string[] GetThrowsArray(string filePath);
+        public int[] ParseInput(string filePath);
     }
 }

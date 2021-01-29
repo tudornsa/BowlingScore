@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 /*
  * | f1 | f2 | f3 | f4 | f5 | f6 | f7 | f8 | f9 | f10   |
@@ -14,70 +13,64 @@ using System.Collections.Generic;
 
 namespace BowlingScore
 {
-    public class ScoreCalculator
+    public class ScoreCalculator : IScoreCalculator
     {
-        private IInputReader _inputReader;
-        private string _filePath;
+        //private IInputReader _inputReader;
+        //private string _filePath;
         public int TotalScore { get; set; }
         //public Dictionary<int, int> FrameScores { get; set; }
         //public Dictionary<int, string> FrameThrows { get; set; }
         //public List<int> FrameScoreList { get; set; }
-        public string[] ThrowsArray { get; set; } // TODO: REname to roll
-        public int[] GroupedThrowsArray { get; set; }
+        public int[] Rolls { get; set; } // TODO: REname to roll
+        //public int[] GroupedThrowsArray { get; set; }
 
-        private const int MaxScore = 10;
-        public ScoreCalculator(IInputReader inputReader, string filePath) // dependency injection needs interface to use for mock testing
+        private const int MaxPinNumber = 10;
+        public ScoreCalculator(int[] rolls) // dependency injection needs interface to use for mock testing
         {
             TotalScore = 0;
-            _filePath = filePath;
-            _inputReader = inputReader;
-            ThrowsArray = _inputReader.GetThrowsArray(_filePath); // OK? // TODO:RENAMe to rolls
-            ExtractThrowValues(); // TODO: MOve this if necessary
+            Rolls = rolls;
+            //_filePath = filePath;
+            //_inputReader = inputReader;
+            //Rolls = _inputReader.P(_filePath); // OK? // TODO:RENAMe to rolls
+            //ExtractThrowValues(); // TODO: MOve this if necessary
             //FrameScores = new Dictionary<int, int>();
         }
 
         public int CalculateScore()
         {
-            Console.Write("New array: [ ");
-            foreach (var throwValue in GroupedThrowsArray)
+            // do sth like for( i,,.....) -> TotalScore += CalculateFrameScore(i) &&&& StringBuilder += BuildFrame(i)
+           // var stringBuilder = "|";
+
+            for (int i = 0, frameNumber = 1; i < Rolls.Length && i + 1 < Rolls.Length && frameNumber <= 10; i += 2, frameNumber++)
             {
-                Console.Write($"{throwValue}, ");
-            }
-
-            Console.WriteLine(" ]");
-
-            var stringBuilder = "|";
-
-            for (int i = 0, frameNumber = 1; i < GroupedThrowsArray.Length && i + 1 < GroupedThrowsArray.Length && frameNumber <= 10; i += 2, frameNumber++)
-            {
-                if (frameNumber == 10)
-                {
-                    if (i + 2 > GroupedThrowsArray.Length - 1) // 2 throws in 10th
-                    {
-                        stringBuilder += $" {GroupedThrowsArray[i]}, {GroupedThrowsArray[i + 1]}   |";
-                    }
-                    else // 3 throws
-                    {
-                        stringBuilder += $" {GroupedThrowsArray[i]}, {GroupedThrowsArray[i+1]}, {GroupedThrowsArray[i+2]} |";
-                    }
-                }
-                else
-                {
-                    stringBuilder += $" {GroupedThrowsArray[i]}, {GroupedThrowsArray[i + 1]} |";
-                }
+                //if (frameNumber == 10) // DO NOT DELETE! -> Create new class + interface for this!
+                //{
+                //    if (i + 2 > GroupedThrowsArray.Length - 1) // 2 throws in 10th
+                //    {
+                //        stringBuilder += $" {GroupedThrowsArray[i]}, {GroupedThrowsArray[i + 1]}   |";
+                //    }
+                //    else // 3 throws
+                //    {
+                //        stringBuilder += $" {GroupedThrowsArray[i]}, {GroupedThrowsArray[i+1]}, {GroupedThrowsArray[i+2]} |";
+                //    }
+                //}
+                //else
+                //{
+                //    stringBuilder += $" {GroupedThrowsArray[i]}, {GroupedThrowsArray[i + 1]} |";
+                //}
                 Console.WriteLine($"Frame {frameNumber}");
-                Console.WriteLine($"Current item: [{i}]: {GroupedThrowsArray[i]}");
-                Console.WriteLine($"Next item:[{i + 1}]: {GroupedThrowsArray[i + 1]}");
-                var firstThrow = GroupedThrowsArray[i];
-                var secondThrow = GroupedThrowsArray[i + 1];
-                Console.WriteLine($"[{firstThrow}][{secondThrow}]");
+                Console.WriteLine($"Current item: [{i}]: {Rolls[i]}");
+                Console.WriteLine($"Next item:[{i + 1}]: {Rolls[i + 1]}");
+                var firstRoll = Rolls[i];
+                var secondRoll = Rolls[i + 1];
+                Console.WriteLine($"[{firstRoll}][{secondRoll}]");
 
-                if (firstThrow == 10) // use static isStrike()
+                if (isStrike(firstRoll)) // use static isStrike()
                 {
                     Console.WriteLine("STRIKE");
                     HandleStrike(i, frameNumber);
                 }
-                else if ((firstThrow + secondThrow) == 10)
+                else if (isSpare(firstRoll, secondRoll))
                 {
                     Console.WriteLine("SPARE");
                     HandleSpare(i, frameNumber);
@@ -85,11 +78,11 @@ namespace BowlingScore
                 else
                 {
                     Console.WriteLine("Normal situation");
-                    HandleNormalThrow(firstThrow, secondThrow, frameNumber);
+                    HandleNormalThrow(firstRoll, secondRoll, frameNumber);
                 }
             }
 
-            Console.WriteLine($"SCORE DISPLAY: {stringBuilder}");
+            //Console.WriteLine($"SCORE DISPLAY: {stringBuilder}");
 
             //foreach (var frameScore in FrameScores)
             //{ 
@@ -101,20 +94,30 @@ namespace BowlingScore
             return TotalScore;
         }
 
-
-        private void ExtractThrowValues() // Helps a bit // TODO: rename this!
+        private static bool isSpare(int firstRoll, int secondRoll)
         {
-            var throwsValueList = new List<int>();
-            foreach (var throwValue in ThrowsArray)
-            {
-                throwsValueList.Add(Int32.Parse(throwValue)); // add item to int array
-                if (throwValue == "10")
-                {
-                    throwsValueList.Add(0);
-                }
-            }
-            GroupedThrowsArray = throwsValueList.ToArray();
+            return firstRoll + secondRoll == 10;
         }
+
+        private static bool isStrike(int roll)
+        {
+            return roll == 10;
+        }
+
+        //private void ExtractThrowValues() // Helps a bit // TODO: rename this!
+        //{
+        //    var throwsValueList = new List<int>();
+        //    foreach (var throwValue in ThrowsArray)
+        //    {
+        //        throwsValueList.Add(Int32.Parse(throwValue)); // add item to int array
+        //        if (throwValue == "10")
+        //        {
+        //            throwsValueList.Add(0);
+        //        }
+        //    }
+        //    GroupedThrowsArray = throwsValueList.ToArray();
+        //}
+
 
         private static int GetFrameScore(int throw1, int throw2)
         {
@@ -128,12 +131,23 @@ namespace BowlingScore
         private int GetNextThrow(int currentIndex)
         {
             // + 2 because we are at pair [i, i+1] and we want to get next throw, which is i+2
-            return GroupedThrowsArray[currentIndex + 2];
+            return Rolls[currentIndex + 2];
         }
 
         private int[] GetNextTwoThrows(int currentIndex)
         {
-            return new int[2] { GroupedThrowsArray[currentIndex + 2], GroupedThrowsArray[currentIndex + 3] }; // same as above
+            int nextThrowOne = Rolls[currentIndex + 2];
+            int nextThrowTwo;
+            if (isStrike((nextThrowOne)))
+            {
+                nextThrowTwo = GetNextThrow(currentIndex + 2); // +2 because I want to get next index for nextThrowOne
+            }
+            else
+            {
+                nextThrowTwo = Rolls[currentIndex + 3];
+            }
+
+            return new [] { nextThrowOne, nextThrowTwo };
         }
 
         private void HandleStrike(int currentIndex, int currentFrame)
@@ -142,12 +156,12 @@ namespace BowlingScore
             var nextThrowOne = next2Throws[0];
             var nextThrowTwo = next2Throws[1];
 
-            if (nextThrowOne == 10) // TODO: use MaxScore && rename to MaxPinNumber..
-            {
-                nextThrowTwo = GetNextThrow(currentIndex + 2);
-            }
+            //if (isStrike(nextThrowOne)) // TODO: use MaxPinNumber && rename to MaxPinNumber..
+            //{
+            //    nextThrowTwo = GetNextThrow(currentIndex + 2);
+            //}
 
-            var currentScore = MaxScore + nextThrowOne + nextThrowTwo; // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
+            var currentScore = MaxPinNumber + nextThrowOne + nextThrowTwo; // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
 
             // next lines can be extracted in method "saveScores... which calculates the frame score, saves the current frame score in FrameScores[currentFrame] and calculates total score in TotalScore"
             var frameScore = TotalScore + currentScore;
@@ -161,7 +175,7 @@ namespace BowlingScore
         {
             //GroupedThrowsArray
             var nextThrow = GetNextThrow(currentIndex);
-            var currentScore = MaxScore + nextThrow; // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
+            var currentScore = MaxPinNumber + nextThrow; // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
 
             // next lines can be extracted in method "saveScores... which calculates the frame score, saves the current frame score in FrameScores[currentFrame] and calculates total score in TotalScore"
             //var frameScore = TotalScore + currentScore;
