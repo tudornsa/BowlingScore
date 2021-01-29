@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace BowlingScore
+namespace BowlingScore.Services
 {
     public class InputReader : IInputReader
     {

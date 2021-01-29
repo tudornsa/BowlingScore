@@ -10,7 +10,7 @@ namespace BowlingScore.Tests
     //    }
     //}
 
-    public class ScoreCalculatorTests
+    public class ScoreCalculatorTests // TODO: USE THEORY! (https://stackoverflow.com/questions/36419534/pass-array-of-string-to-xunit-test-method/61497205#61497205)
     {
         public class InputReaderMock : IInputReader
         {

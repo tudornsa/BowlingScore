@@ -11,7 +11,7 @@
    
  */
 
-namespace BowlingScore
+namespace BowlingScore.Services
 {
     public class ScoreCalculator : IScoreCalculator
     {
@@ -21,7 +21,7 @@ namespace BowlingScore
         //public Dictionary<int, int> FrameScores { get; set; }
         //public Dictionary<int, string> FrameThrows { get; set; }
         //public List<int> FrameScoreList { get; set; }
-        public int[] Rolls { get; set; } // TODO: REname to roll
+        public int[] Rolls { get; set; } // maybe make private instead of prop?
         //public int[] GroupedThrowsArray { get; set; }
 
         private const int MaxPinNumber = 10;
@@ -103,22 +103,7 @@ namespace BowlingScore
         {
             return roll == 10;
         }
-
-        //private void ExtractThrowValues() // Helps a bit // TODO: rename this!
-        //{
-        //    var throwsValueList = new List<int>();
-        //    foreach (var throwValue in ThrowsArray)
-        //    {
-        //        throwsValueList.Add(Int32.Parse(throwValue)); // add item to int array
-        //        if (throwValue == "10")
-        //        {
-        //            throwsValueList.Add(0);
-        //        }
-        //    }
-        //    GroupedThrowsArray = throwsValueList.ToArray();
-        //}
-
-
+        
         private static int GetFrameScore(int throw1, int throw2)
         {
             return throw1 + throw2;

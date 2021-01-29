@@ -1,4 +1,6 @@
-﻿namespace BowlingScore
+﻿using BowlingScore.Services;
+
+namespace BowlingScore
 {
     class Program
     {
