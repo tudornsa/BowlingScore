@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 /*
  * | f1 | f2 | f3 | f4 | f5 | f6 | f7 | f8 | f9 | f10   |
@@ -18,28 +16,28 @@ namespace BowlingScore
 {
     public class ScoreCalculator
     {
-        private InputReader _inputReader;
+        private IInputReader _inputReader;
         private string _filePath;
         public int TotalScore { get; set; }
-        public Dictionary<int, int> FrameScores { get; set; }
-        public Dictionary<int, string> FrameThrows { get; set; }
-        public List<int> FrameScoreList { get; set; }
-        public string[] ThrowsArray { get; set; }
+        //public Dictionary<int, int> FrameScores { get; set; }
+        //public Dictionary<int, string> FrameThrows { get; set; }
+        //public List<int> FrameScoreList { get; set; }
+        public string[] ThrowsArray { get; set; } // TODO: REname to roll
         public int[] GroupedThrowsArray { get; set; }
 
-        const int MaxScore = 10;
-        public ScoreCalculator(InputReader inputReader, string filePath) // dependency injection needs interface to use for mock testing
+        private const int MaxScore = 10;
+        public ScoreCalculator(IInputReader inputReader, string filePath) // dependency injection needs interface to use for mock testing
         {
             TotalScore = 0;
             _filePath = filePath;
             _inputReader = inputReader;
-            ThrowsArray = _inputReader.GetThrowsArray(_filePath);
-            FrameScores = new Dictionary<int, int>();
+            ThrowsArray = _inputReader.GetThrowsArray(_filePath); // OK? // TODO:RENAMe to rolls
+            ExtractThrowValues(); // TODO: MOve this if necessary
+            //FrameScores = new Dictionary<int, int>();
         }
 
         public int CalculateScore()
         {
-            ExtractThrowValues(); // am I doing this correctly? should/can I call this in constructor?
             Console.Write("New array: [ ");
             foreach (var throwValue in GroupedThrowsArray)
             {
@@ -74,7 +72,7 @@ namespace BowlingScore
                 var secondThrow = GroupedThrowsArray[i + 1];
                 Console.WriteLine($"[{firstThrow}][{secondThrow}]");
 
-                if (firstThrow == 10) // TODO: case when next 2 vals are 10
+                if (firstThrow == 10) // use static isStrike()
                 {
                     Console.WriteLine("STRIKE");
                     HandleStrike(i, frameNumber);
@@ -87,16 +85,16 @@ namespace BowlingScore
                 else
                 {
                     Console.WriteLine("Normal situation");
-                    HandleNormalThrows(firstThrow, secondThrow, frameNumber);
+                    HandleNormalThrow(firstThrow, secondThrow, frameNumber);
                 }
             }
 
             Console.WriteLine($"SCORE DISPLAY: {stringBuilder}");
 
-            foreach (var frameScore in FrameScores)
-            { 
-                Console.WriteLine($"Frame {frameScore.Key}: {frameScore.Value}");
-            }
+            //foreach (var frameScore in FrameScores)
+            //{ 
+            //    Console.WriteLine($"Frame {frameScore.Key}: {frameScore.Value}");
+            //}
 
             Console.WriteLine($"Total score: {TotalScore}");
 
@@ -104,7 +102,7 @@ namespace BowlingScore
         }
 
 
-        private void ExtractThrowValues() // Helps a bit
+        private void ExtractThrowValues() // Helps a bit // TODO: rename this!
         {
             var throwsValueList = new List<int>();
             foreach (var throwValue in ThrowsArray)
@@ -144,7 +142,7 @@ namespace BowlingScore
             var nextThrowOne = next2Throws[0];
             var nextThrowTwo = next2Throws[1];
 
-            if (nextThrowOne == 10)
+            if (nextThrowOne == 10) // TODO: use MaxScore && rename to MaxPinNumber..
             {
                 nextThrowTwo = GetNextThrow(currentIndex + 2);
             }
@@ -153,7 +151,7 @@ namespace BowlingScore
 
             // next lines can be extracted in method "saveScores... which calculates the frame score, saves the current frame score in FrameScores[currentFrame] and calculates total score in TotalScore"
             var frameScore = TotalScore + currentScore;
-            FrameScores.Add(currentFrame, frameScore);
+            //FrameScores.Add(currentFrame, frameScore);
             Console.WriteLine($"Frame {currentFrame} score: {frameScore}");
             TotalScore += currentScore;
             Console.WriteLine($"Total SCORE: {TotalScore}");
@@ -166,43 +164,23 @@ namespace BowlingScore
             var currentScore = MaxScore + nextThrow; // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
 
             // next lines can be extracted in method "saveScores... which calculates the frame score, saves the current frame score in FrameScores[currentFrame] and calculates total score in TotalScore"
-            var frameScore = TotalScore + currentScore;
-            FrameScores.Add(currentFrame, frameScore);
+            //var frameScore = TotalScore + currentScore;
+            //FrameScores.Add(currentFrame, frameScore);
             Console.WriteLine($"Current score: {currentScore}");
             TotalScore += currentScore;
             Console.WriteLine($"Total score: {TotalScore}");
         }
 
-        private void HandleNormalThrows(int firstThrow, int secondThrow, int currentFrame)
+        private void HandleNormalThrow(int firstThrow, int secondThrow, int currentFrame)
         {
             var currentScore = GetFrameScore(firstThrow, secondThrow); // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
 
             // next lines can be extracted in method "saveScores... which calculates the frame score, saves the current frame score in FrameScores[currentFrame] and calculates total score in TotalScore"
             var frameScore = TotalScore + currentScore;
-            FrameScores.Add(currentFrame, frameScore);
-            Console.WriteLine($"Current score: {currentScore}");
+            //FrameScores.Add(currentFrame, frameScore);
+            //Console.WriteLine($"Current score: {currentScore}");
             TotalScore = frameScore;
             Console.WriteLine($"Total score: {TotalScore}");
         }
-
-        //private void RecordThrows(int firstThrow, int secondThrow, int currentFrame)
-        //{
-        //    Console.Write("|");
-        //    for (var i = 1; i < ThrowsArray; i++)
-        //    {
-        //        Console.Write($" {firstThrow}, {secondThrow} |");
-        //    }
-
-        //    Console.WriteLine($" {}");
-        //    if (currentFrame == 10)
-        //    {
-        //        //handle this bish
-        //    }
-        //    else
-        //    {
-        //        if(firstThrow == 10)
-        //        FrameThrows.Add(currentFrame, $"{firstThrow}, {secondThrow}");
-        //    }
-        //}
     }
 }
