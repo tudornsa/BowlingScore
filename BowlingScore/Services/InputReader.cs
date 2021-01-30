@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using Array = System.Array;
 
 namespace BowlingScore.Services
 {
@@ -15,64 +15,43 @@ namespace BowlingScore.Services
         //public string RawInput { get; set; } // do I need to use this?
         //public string[] ThrowsArray { get; set; } // do I need to use this?
 
-        private const int MaxPinNumber = 10;
-        private static string ReadRawInput(string filePath) // Get raw input as string. Should this be static?
+        private static string ReadRawInput(string filePath) // Should this be static? Should any method that does not need a prop be static?
         {
             return File.ReadAllText(filePath);
         }
 
         private static string[] ExtractArray(string rawInput)
         {
-            return rawInput.Split(", ");  // IS THIS OK NOW????
+            return rawInput.Split(", ");
         }
 
-        //private static string RemoveWhiteSpace(string input) 
-        //{
-        //    return Regex.Replace(input, @"\s+", "");
-        //}
-
-        private string[] GetInput(string filePath) // Do stuff with input
+        private static int[] GetInput(string filePath)
         {
             var rawInput = ReadRawInput(filePath);
-            //var rawInputNoSpaces = RemoveWhiteSpace(rawInput); // no need
-            //Console.WriteLine(rawInputNoSpaces);
-            //RawInput = rawInputNoSpaces;
-            //ThrowsArray = rawInputNoSpaces.Split(','); // Just return it?
             var rolls = ExtractArray(rawInput);
-
-
-            Console.Write("---->");
-            foreach (var theThrow in rolls)
-            {
-                Console.Write($"{theThrow}, ");
-            }
-            Console.WriteLine();
-            return rolls;
+            return ConvertToInt(rolls);
         }
 
-        private static int ConvertToInt(string number)
+        private static int[] ConvertToInt(string[] rolls)
         {
-            return Int32.Parse(number);
+            return Array.ConvertAll(rolls, roll => Int32.Parse(roll));
         }
 
-        private static int[] AddZeroIfStrike(string[] originalRolls)
-        {
-            var modifiedRolls = new List<int>();
-            foreach (var rollValue in originalRolls)
-            {
-                modifiedRolls.Add(ConvertToInt(rollValue));
-                if (ConvertToInt(rollValue) == MaxPinNumber)
-                {
-                    modifiedRolls.Add(0);
-                }
-            }
-            return modifiedRolls.ToArray();
-        }
+        //private static int[] GetValues(string[] originalRolls)
+        //{
+        //    //var modifiedRolls = new List<int>();
+        //    //foreach (var rollValue in originalRolls)
+        //    //{
+        //    //    modifiedRolls.Add(ConvertToInt(rollValue));
+        //    //}
+        //    //return modifiedRolls.ToArray();
+        //    return Array.ConvertAll(originalRolls, input => Int32.Parse(input));
+        //}
 
         public int[] ParseInput(string filePath)
         {
-            var originalRolls = GetInput(filePath);
-            return AddZeroIfStrike(originalRolls);
+            var rolls = GetInput(filePath);
+            return rolls;
         }
     }
 }

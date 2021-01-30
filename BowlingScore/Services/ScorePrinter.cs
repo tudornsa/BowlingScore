@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BowlingScore.Services
 {
@@ -16,9 +14,10 @@ namespace BowlingScore.Services
         public void Print()
         {
             var totalScore = _calculator.CalculateScore();
-            var rollsBoard = _framesBuilder.CreateScoreboard(totalScore);
-            Console.WriteLine($"FRAME ROLLS:");
-            Console.WriteLine(rollsBoard);
+            var scoreBoard = _framesBuilder.CreateScoreboard(totalScore);
+            Console.WriteLine($"--------");
+            Console.WriteLine(scoreBoard);
+            Console.WriteLine($"Total: {totalScore}");
         }
 
     }

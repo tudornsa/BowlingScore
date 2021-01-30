@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace BowlingScore.Tests
 {
     public class InputReaderTests

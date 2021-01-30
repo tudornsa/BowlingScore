@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using BowlingScore.Shared;
 
 /*
@@ -20,70 +17,40 @@ namespace BowlingScore.Services
     public class FramesBuilder : IFramesBuilder
     {
         private int[] _rolls;
-        private const int NOEXTRAROLL = 999;
         public FramesBuilder(int[] rolls)
         {
             _rolls = rolls;
         }
         public string CreateScoreboard(int totalScore)
         {
-            var rollsString = RenameThis();
-            return "| f1 | f2 | f3 | f4 | f5 | f6 | f7 | f8 | f9 | f10   |\n" + rollsString; // TODO
+            var scoreBoard = GetRolls();
+            return Rules.ScoreBoardHeader + Environment.NewLine + scoreBoard;
         }
 
-        private string RenameThis()
+        private string GetRolls()
         {
-            string stringBuilder = "|";
+            string rolls = "|";
             for (int i = 0, frameNumber = 1;
                 i < _rolls.Length && i + 1 < _rolls.Length && frameNumber <= 10;
                 i += 2, frameNumber++)
             {
-                //if (frameNumber == 10) // DO NOT DELETE! -> Create new class + interface for this!
-                //{
-                //    if (ExtraRoll(_rolls[i], _rolls[i + 1]))
-                //    {
-                //        var extraRoll = GetExtraRoll();
-                //        stringBuilder += BuildFrame(_rolls[i], _rolls[i + 1], _rolls[i + 2]);
-                //    }
-                //    else // 3 throws
-                //    {
-                //        stringBuilder += BuildFrame(_rolls[i], _rolls[i + 1]);
-                //    }
-                //}
-                //else
-                //{
-                //    stringBuilder += BuildFrame(_rolls[i], _rolls[i + 1]);
-                //}
-                //stringBuilder += (frameNumber == 10 && ExtraRoll(_rolls[i], _rolls[i + 1])) ? 
-                //    BuildFrame(_rolls[i], _rolls[i + 1], _rolls[i + 2]) : 
-                //    BuildFrame(_rolls[i], _rolls[i + 1]);
                 if (frameNumber == 10)
                 {
-                    //if (ExtraRoll(_rolls[i], _rolls[i + 1]))
-                    //{
-                    //    stringBuilder += BuildFrame(_rolls[i], _rolls[i + 1], _rolls[i + 2], 7);
-                    //}
-                    //else
-                    //{
-                    //    stringBuilder += BuildFrame(_rolls[i], _rolls[i + 1], 7);
-                    //}
-                    stringBuilder += BuildLastFrame(i, Rules.LastFrameLength);
+                    rolls += BuildLastFrame(i, Rules.LastFrameLength);
                 }
                 else
                 {
-                    stringBuilder += BuildFrame(_rolls[i], _rolls[i + 1], Rules.NormalFrameLength);
+                    rolls += BuildFrame(_rolls[i], _rolls[i + 1], Rules.NormalFrameLength);
                     if (Rules.isStrike(_rolls[i])) i--;
                 }
-
-                stringBuilder += "|";
+                rolls += "|";
             }
-
-            return stringBuilder;
+            return rolls;
         }
 
         private string BuildLastFrame(int currentIndex, int frameLength)
         {
-            return ExtraRoll(_rolls[currentIndex], _rolls[currentIndex + 1]) ?
+            return hasExtraRoll(_rolls[currentIndex], _rolls[currentIndex + 1]) ?
                 BuildFrame(_rolls[currentIndex], _rolls[currentIndex + 1], _rolls[currentIndex + 2], frameLength) :
                 BuildFrame(_rolls[currentIndex], _rolls[currentIndex + 1], frameLength);
         }
@@ -96,11 +63,32 @@ namespace BowlingScore.Services
             }
             else if (Rules.isSpare(firstRoll, secondRoll))
             {
-                return AddPadding($"{GetSymbol(firstRoll)}, /", frameLength);
+                return AddPadding($"{GetSymbol(firstRoll)}, {Rules.SpareSymbol}", frameLength);
             }
             else
             {
                 return AddPadding($"{GetSymbol(firstRoll)}, {GetSymbol(secondRoll)}", frameLength);
+            }
+        }
+
+
+        private string BuildFrame(int firstRoll, int secondRoll, int thirdRoll, int frameLength)
+        {
+            if (Rules.isStrike(firstRoll))
+            {
+                if (Rules.isSpare(secondRoll, thirdRoll))
+                {
+                    return AddPadding($"{GetSymbol(firstRoll)}, {GetSymbol(secondRoll)}, {Rules.SpareSymbol}", frameLength);
+                }
+                return AddPadding($"{GetSymbol(firstRoll)}, {GetSymbol(secondRoll)}, {GetSymbol(thirdRoll)}", frameLength);
+            }
+            else if (Rules.isSpare(firstRoll, secondRoll))
+            {
+                return AddPadding($"{GetSymbol(firstRoll)}, {Rules.SpareSymbol}, {GetSymbol(thirdRoll)}", frameLength);
+            }
+            else
+            {
+                return AddPadding($"{GetSymbol(firstRoll)}, {GetSymbol(secondRoll)}, {GetSymbol(thirdRoll)}", frameLength);
             }
         }
 
@@ -109,47 +97,17 @@ namespace BowlingScore.Services
             return str.PadRight(totalLength, ' ');
         }
 
-        private string BuildFrame(int firstRoll, int secondRoll, int thirdRoll, int frameLength)
-        {
-            if (Rules.isStrike(firstRoll))
-            {
-                if (Rules.isSpare(secondRoll, thirdRoll))
-                {
-                    return AddPadding($"{GetSymbol(firstRoll)}, {GetSymbol(secondRoll)}, /", frameLength);
-                }
-                return AddPadding($"{GetSymbol(firstRoll)}, {GetSymbol(secondRoll)}, {GetSymbol(thirdRoll)}", frameLength);
-            }
-            else if (Rules.isSpare(firstRoll, secondRoll))
-            {
-                return AddPadding($"{GetSymbol(firstRoll)}, /, {GetSymbol(thirdRoll)}", frameLength);
-            }
-            else
-            {
-                return AddPadding($"{GetSymbol(firstRoll)}, {GetSymbol(secondRoll)}, {thirdRoll}", frameLength);
-            }
-            //return $"{firstRoll}, {secondRoll}, {thirdRoll}";
-        }
-
-        private static bool ExtraRoll(int firstRoll, int secondRoll) =>
+        private static bool hasExtraRoll(int firstRoll, int secondRoll) =>
             Rules.isStrike(firstRoll) || Rules.isSpare(firstRoll, secondRoll);
-
-        private int GetExtraRoll()
-        {
-            return _rolls[_rolls.Length - 1];
-        }
-        private string GetLastFrame(int firstRoll, int secondRoll)
-        {
-            return $"{firstRoll}, {secondRoll}   ";
-        }
 
         private string GetSymbol(int roll)
         {
-            if (roll == 10) // Do this using MAXROLLS or whatever
+            if (roll == Rules.MaxPinNumber)
             {
-                return "X";
+                return Rules.StrikeSymbol;
             } else if (roll == 0)
             {
-                return "-";
+                return Rules.ZeroSymbol;
             }
             else
             {

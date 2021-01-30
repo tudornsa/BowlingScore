@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
 using BowlingScore.Shared;
 
 /*
@@ -21,7 +18,7 @@ namespace BowlingScore.Services
     {
         //private IInputReader _inputReader;
         //private string _filePath;
-        public int TotalScore { get; set; }
+        //public int TotalScore { get; set; }
         //public Dictionary<int, int> FrameScores { get; set; }
         //public Dictionary<int, string> FrameThrows { get; set; }
         //public List<int> FrameScoreList { get; set; }
@@ -31,7 +28,7 @@ namespace BowlingScore.Services
         private const int MaxPinNumber = 10;
         public ScoreCalculator(int[] rolls) // dependency injection needs interface to use for mock testing
         {
-            TotalScore = 0;
+            //TotalScore = 0;
             Rolls = rolls;
             //_filePath = filePath;
             //_inputReader = inputReader;
@@ -43,13 +40,11 @@ namespace BowlingScore.Services
         public int CalculateScore()
         {
             // do sth like for( i,,.....) -> TotalScore += CalculateFrameScore(i) &&&& StringBuilder += BuildFrame(i)
-           // var stringBuilder = "|";
-
+            // var stringBuilder = "|";
+            var totalScore = 0;
             for (int i = 0, frameNumber = 1; i < Rolls.Length && i + 1 < Rolls.Length && frameNumber <= 10; i += 2, frameNumber++)
             {
                 Console.WriteLine($"Frame {frameNumber}");
-                //Console.WriteLine($"Current item: [{i}]: {Rolls[i]}");
-                //Console.WriteLine($"Next item:[{i + 1}]: {Rolls[i + 1]}");
                 var firstRollInFrame = Rolls[i];
                 var secondRollInFrame = Rolls[i + 1];
                 Console.WriteLine($"[{firstRollInFrame}][{secondRollInFrame}]");
@@ -57,172 +52,89 @@ namespace BowlingScore.Services
                 if (frameNumber == Rules.LastFrame)
                 {
                     Console.WriteLine($"Last frame: [{firstRollInFrame}] [{secondRollInFrame}]");
-                    HandleLastFrame(firstRollInFrame, secondRollInFrame);
-                    Console.WriteLine($"Total: {TotalScore}");
+                    totalScore += HandleLastFrame(firstRollInFrame, secondRollInFrame);
+                    //Console.WriteLine($"Total: {TotalScore}");
                 }
                 else
                 {
-                    if (Rules.isStrike(firstRollInFrame)) // use static isStrike()
+                    if (Rules.isStrike(firstRollInFrame))
                     {
                         Console.WriteLine("STRIKE");
                         var nextRollOne = Rolls[i + 1];
-                        var nextRollTwo = Rolls[i + 2]; //could be out of bounds
-                        //firstRoll = 10
-                        //secondRoll = nextRoll
-                        HandleStrike(nextRollOne, nextRollTwo);
+                        var nextRollTwo = Rolls[i + 2];
+                        totalScore += HandleStrike(nextRollOne, nextRollTwo);
                         i--;
                     }
                     else if (Rules.isSpare(firstRollInFrame, secondRollInFrame))
                     {
                         var nextRoll = Rolls[i + 2];
                         Console.WriteLine("SPARE");
-                        HandleSpare(nextRoll);
+                        totalScore += HandleSpare(nextRoll);
                     }
                     else
                     {
                         Console.WriteLine("Normal situation");
-                        HandleNormalRoll(firstRollInFrame, secondRollInFrame);
+                        totalScore += HandleNormalRoll(firstRollInFrame, secondRollInFrame);
                     }
                 }
             }
-
-            //Console.WriteLine($"SCORE DISPLAY: {stringBuilder}");
-
-            //foreach (var frameScore in FrameScores)
-            //{ 
-            //    Console.WriteLine($"Frame {frameScore.Key}: {frameScore.Value}");
-            //}
-
-            Console.WriteLine($"Total score: {TotalScore}");
-
-            return TotalScore;
+            //Console.WriteLine($"Total score: {TotalScore}");
+            return totalScore;
         }
 
-        private void HandleLastFrame(int firstRollInFrame, int secondRollInFrame)
+        private int HandleLastFrame(int firstRollInFrame, int secondRollInFrame)
         {
             if (Rules.isStrike(firstRollInFrame))
             {
+                // extra roll situation
                 // 3 throws -> getExtraThrow => return Rolls[last]
                 var extraRoll = GetExtraRoll();
                 var frameScore = Rules.MaxPinNumber + secondRollInFrame + extraRoll;
-                TotalScore += frameScore;
+                return frameScore;
+                //TotalScore += frameScore;
 
-                Console.WriteLine($"Total score last: {TotalScore}");
-            }else if (Rules.isSpare(firstRollInFrame, secondRollInFrame))
+                //Console.WriteLine($"Total score last: {TotalScore}");
+            }
+            else if (Rules.isSpare(firstRollInFrame, secondRollInFrame))
             {
                 // extra roll situation
                 var extraRoll = GetExtraRoll();
                 var frameScore = Rules.MaxPinNumber + extraRoll;
-
-                TotalScore += frameScore;
+                return frameScore;
+                //TotalScore += frameScore;
             }
             else
             {
                 var frameScore = firstRollInFrame + secondRollInFrame;
-                TotalScore += frameScore;
+                return frameScore;
+                //TotalScore += frameScore;
             }
         }
-
 
         private int GetExtraRoll()
         {
             return Rolls[Rolls.Length - 1];
         }
-        private void HandleNormalFrame()
-        {
 
-        }
-
-        //private static bool isSpare(int firstRoll, int secondRoll)
-        //{
-        //    return firstRoll + secondRoll == 10;
-        //}
-
-        //private static bool isStrike(int roll)
-        //{
-        //    return roll == 10;
-        //}
-        
-        private static int GetFrameScore(int throw1, int throw2)
-        {
-            return throw1 + throw2;
-        }
-        private static int GetFrameScore(int[] throws)
-        {
-            return throws[0] + throws[1];
-        }
-
-        private int GetNextThrow(int currentIndex)
-        {
-            // + 2 because we are at pair [i, i+1] and we want to get next throw, which is i+2
-            return Rolls[currentIndex + 2];
-        }
-
-        private int[] GetNextTwoThrows(int currentIndex)
-        {
-            int nextThrowOne = Rolls[currentIndex + 2];
-            int nextThrowTwo;
-            if (Rules.isStrike((nextThrowOne)))
-            {
-                nextThrowTwo = GetNextThrow(currentIndex + 2); // +2 because I want to get next index for nextThrowOne
-            }
-            else
-            {
-                nextThrowTwo = Rolls[currentIndex + 3];
-            }
-
-            return new [] { nextThrowOne, nextThrowTwo };
-        }
-
-        private void HandleStrike(int nextRollOne, int nextRollTwo)
+        private int HandleStrike(int nextRollOne, int nextRollTwo)
         {
             var frameScore = Rules.MaxPinNumber + nextRollOne + nextRollTwo;
-            TotalScore += frameScore;
-            //var next2Throws = GetNextTwoThrows(currentIndex);
-            //var nextThrowOne = next2Throws[0];
-            //var nextThrowTwo = next2Throws[1];
-
-            //if (isStrike(nextThrowOne)) // TODO: use MaxPinNumber && rename to MaxPinNumber..
-            //{
-            //    nextThrowTwo = GetNextThrow(currentIndex + 2);
-            //}
-
-            //var currentScore = Rules.MaxPinNumber+ nextThrowOne + nextThrowTwo; // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
-
-            //// next lines can be extracted in method "saveScores... which calculates the frame score, saves the current frame score in FrameScores[currentFrame] and calculates total score in TotalScore"
-            //var frameScore = TotalScore + currentScore;
-            ////FrameScores.Add(currentFrame, frameScore);
-            ////Console.WriteLine($"Frame {currentFrame} score: {frameScore}");
-            //TotalScore += currentScore;
-            Console.WriteLine($"Total SCORE: {TotalScore}");
+            return frameScore;
+            //TotalScore += frameScore;
         }
 
-        private void HandleSpare(int nextRoll)
+        private int HandleSpare(int nextRoll)
         {
-            //GroupedThrowsArray
-            //var nextThrow = GetNextThrow(currentIndex);
-            //var currentScore = MaxPinNumber + nextThrow; // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
-
             var frameScore = Rules.MaxPinNumber + nextRoll;
-            TotalScore += frameScore;
-
-            // next lines can be extracted in method "saveScores... which calculates the frame score, saves the current frame score in FrameScores[currentFrame] and calculates total score in TotalScore"
-            //var frameScore = TotalScore + currentScore;
-            //FrameScores.Add(currentFrame, frameScore);
-            //Console.WriteLine($"Current score: {currentScore}");
-            //TotalScore += currentScore;
-            Console.WriteLine($"Total score: {TotalScore}");
+            return frameScore;
+            //TotalScore += frameScore;
         }
 
-        private void HandleNormalRoll(int firstRoll, int secondRoll)
+        private int HandleNormalRoll(int firstRoll, int secondRoll)
         {
-            var frameScore = firstRoll + secondRoll; // current score is calculated differently depending on situation: strike: score(t1 + t2) + next1 + next2, spare: score(t1 + t2) + next1, normal: score(t1 + t2)
-
-            // next lines can be extracted in method "saveScores... which calculates the frame score, saves the current frame score in FrameScores[currentFrame] and calculates total score in TotalScore"
-            //FrameScores.Add(currentFrame, frameScore);
-            //Console.WriteLine($"Current score: {currentScore}");
-            TotalScore += frameScore;
-            Console.WriteLine($"Total score: {TotalScore}");
+            var frameScore = firstRoll + secondRoll;
+            return frameScore;
+            //TotalScore += frameScore;
         }
     }
 }
