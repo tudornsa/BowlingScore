@@ -12,51 +12,51 @@ namespace BowlingScore.Tests
 
     public class ScoreCalculatorTests // TODO: USE THEORY! (https://stackoverflow.com/questions/36419534/pass-array-of-string-to-xunit-test-method/61497205#61497205)
     {
-        public class InputReaderMock : IInputReader
-        {
-            private readonly int[] _returnArr;
-            public InputReaderMock(int[] returnArr)
-            {
-                _returnArr = returnArr;
-            }
+        //public class InputReaderMock : IInputReader
+        //{
+        //    private readonly int[] _returnArr;
+        //    public InputReaderMock(int[] returnArr)
+        //    {
+        //        _returnArr = returnArr;
+        //    }
             
-            //public string[] GetRolls(string filePath)
-            //{
-            //    return _returnArr;
-            //}
+        //    //public string[] GetRolls(string filePath)
+        //    //{
+        //    //    return _returnArr;
+        //    //}
 
-            public int[] ParseInput(string filePath)
-            {
-                return _returnArr;
-            }
-        }
+        //    public int[] ParseInput(string filePath)
+        //    {
+        //        return _returnArr;
+        //    }
+        //}
         
-        private const string InputFilePathMock = @"mockFilePath";
+        //private const string InputFilePathMock = @"mockFilePath";
 
-        [Fact]
-        public void CalculateScore_InputExampleTotalScore_Equals90()
-        {
-            var expected = 90;
-            var rolls = new [] { 2, 3, 5, 4, 9, 1, 2, 5, 3, 2, 4, 2, 3, 3, 4, 6, 10, 0, 3, 2 };
-            //IInputReader readerMock = new InputReaderMock(inputArray); // new InputReaderMock(new[] { "2", "3", "5", "4", "9", "1", "2", "5", "3", "2", "4", "2", "3", "3", "4", "6", "10", "3", "2"});
-            ScoreCalculator calculator = new ScoreCalculator(rolls);
+        //[Fact]
+        //public void CalculateScore_InputExampleTotalScore_Equals90()
+        //{
+        //    var expected = 90;
+        //    var rolls = new [] { 2, 3, 5, 4, 9, 1, 2, 5, 3, 2, 4, 2, 3, 3, 4, 6, 10, 0, 3, 2 };
+        //    //IInputReader readerMock = new InputReaderMock(inputArray); // new InputReaderMock(new[] { "2", "3", "5", "4", "9", "1", "2", "5", "3", "2", "4", "2", "3", "3", "4", "6", "10", "3", "2"});
+        //    ScoreCalculator calculator = new ScoreCalculator(rolls);
 
-            var total = calculator.CalculateScore();
+        //    var total = calculator.CalculateScore();
 
-            Assert.Equal(expected, total);
-        }
-        [Fact]
-        public void CalculateScore_OnlySparesInput_TotalScoreEquals150() // change like this
-        {
-            var expected = 150;
-            var rollsMock = new [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
-            //IInputReader readerMock = new InputReaderMock(inputArray); // new InputReaderMock(new[] {"5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5"});
-            ScoreCalculator calculator = new ScoreCalculator(rollsMock);
+        //    Assert.Equal(expected, total);
+        //}
+        //[Fact]
+        //public void CalculateScore_OnlySparesInput_TotalScoreEquals150() // change like this
+        //{
+        //    var expected = 150;
+        //    var rollsMock = new [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
+        //    //IInputReader readerMock = new InputReaderMock(inputArray); // new InputReaderMock(new[] {"5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5"});
+        //    ScoreCalculator calculator = new ScoreCalculator(rollsMock);
 
-            var total = calculator.CalculateScore();
+        //    var total = calculator.CalculateScore();
 
-            Assert.Equal(expected, total);
-        }
+        //    Assert.Equal(expected, total);
+        //}
 
 
         //[Fact]

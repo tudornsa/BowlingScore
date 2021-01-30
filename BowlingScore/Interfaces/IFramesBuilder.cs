@@ -6,6 +6,6 @@ namespace BowlingScore
 {
     public interface IFramesBuilder
     {
-        public string CreateScoreboard();
+        public string CreateScoreboard(int totalScore);
     }
 }
