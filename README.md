@@ -15,6 +15,6 @@ BowlingScore
 ```
  - run the following command:
  
-    `dotnet run --input input.csv`
+    `dotnet run input.(csv/txt)`
     
-    **_Important:_** `--input pathToInput.csv/txt` is required. The input file must be in `\BowlingScore\bin\Debug\netcoreapp3.1\`. Otherwise, you must provide the relative/absolute path. If this folder does not exist, you can run `dotnet build` to generate it.
+    **_Important:_** `pathToInput.(csv/txt)` is required. The input file must be in `\BowlingScore\bin\Debug\netcoreapp3.1\`. Otherwise, you must provide the relative/absolute path. If this folder does not exist, you can run `dotnet build` to generate it.

@@ -7,21 +7,7 @@ namespace BowlingScore
     {
         static void Main(string[] args)
         {
-            if (args.Length < 2)
-            {
-                Console.WriteLine(
-                    "[Error] Please specify an input file! Correct usage: BowlingScore.exe --input pathToFile");
-                return;
-            }
-
-            if (args[0] != "--input")
-            {
-                Console.WriteLine(
-                    "[Error] Please specify an input file! Correct usage: BowlingScore.exe --input pathToFile");
-                return;
-            }
-
-            var inputFilePath = args[1];
+            var inputFilePath = args[0];
             var reader = new InputReader();
             var rolls = reader.ParseInput(inputFilePath);
 
