@@ -1,133 +1,90 @@
-﻿using BowlingScore.Services;
+﻿using System.Collections.Generic;
+using BowlingScore.Services;
 using Xunit;
 
 namespace BowlingScore.Tests
 {
-    //public class InputReaderMock : IInputReader
-    //{
-    //    public string[] GetRolls(string filePath)
-    //    {
-    //        return new string[19] { "2", "3", "5", "4", "9", "1", "2", "5", "3", "2", "4", "2", "3", "3", "4", "6", "10", "3", "2" };
-    //    }
-    //}
-
-    public class ScoreCalculatorTests // TODO: USE THEORY! (https://stackoverflow.com/questions/36419534/pass-array-of-string-to-xunit-test-method/61497205#61497205)
+    public class ScoreCalculatorTests
     {
-        //public class InputReaderMock : IInputReader
-        //{
-        //    private readonly int[] _returnArr;
-        //    public InputReaderMock(int[] returnArr)
-        //    {
-        //        _returnArr = returnArr;
-        //    }
-
-        //    //public string[] GetRolls(string filePath)
-        //    //{
-        //    //    return _returnArr;
-        //    //}
-
-        //    public int[] ParseInput(string filePath)
-        //    {
-        //        return _returnArr;
-        //    }
-        //}
-
-        //private const string InputFilePathMock = @"mockFilePath";
-
-        [Fact]
-        public void CalculateScore_InputExampleTotalScore_Equals90()
+        [Theory]
+        [MemberData(nameof(ExampleInput))]
+        [MemberData(nameof(OnlySpares))]
+        [MemberData(nameof(OnlyStrikes))]
+        [MemberData(nameof(SpareLastFrame))]
+        [MemberData(nameof(StrikeLastFrame))]
+        [MemberData(nameof(OnlyMisses))]
+        [MemberData(nameof(NormalRolls))]
+        public void CalculateScore_WithCorrectInput_ReturnsExpectedResult(int expectedResult, int[] input)
         {
-            var expected = 90;
-            var rollsMock = new[] { 2, 3, 5, 4, 9, 1, 2, 5, 3, 2, 4, 2, 3, 3, 4, 6, 10, 3, 2 };
-            //IInputReader readerMock = new InputReaderMock(inputArray); // new InputReaderMock(new[] { "2", "3", "5", "4", "9", "1", "2", "5", "3", "2", "4", "2", "3", "3", "4", "6", "10", "3", "2"});
-            ScoreCalculator calculator = new ScoreCalculator(rollsMock);
+            ScoreCalculator calculator = new ScoreCalculator(input);
 
             var total = calculator.CalculateScore();
 
-            Assert.Equal(expected, total);
-        }
-        [Fact]
-        public void CalculateScore_OnlySparesInput_TotalScoreEquals150() // change like this
-        {
-            var expected = 150;
-            var rollsMock = new[] { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-            //IInputReader readerMock = new InputReaderMock(inputArray); // new InputReaderMock(new[] {"5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5"});
-            ScoreCalculator calculator = new ScoreCalculator(rollsMock);
-
-            var total = calculator.CalculateScore();
-
-            Assert.Equal(expected, total);
+            Assert.Equal(expectedResult, total);
         }
 
-
-        [Fact]
-        public void CalculateScore_JustStrikesInputTotalScore_Equals300()
-        {
-            var expected = 300;
-            var rollsMock = new [] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 };
-            ScoreCalculator calculator = new ScoreCalculator(rollsMock);
-
-            //act
-            var total = calculator.CalculateScore();
-
-            //assert
-            Assert.Equal(expected, total);
-        }
-
-        [Fact]
-        public void CalculateScore_EdgeCaseTotalScore_ReturnSuccess() //TODO: RENAME THIS TEST CASE
-        {
-            var expectedTotal = 199;
-            var rollsMock = new [] { 3, 4, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10 };
-            ScoreCalculator calculator = new ScoreCalculator(rollsMock);
-
-            //act
-            var total = calculator.CalculateScore();
-
-            //assert
-            Assert.Equal(expectedTotal, total);
-        }
-
-        [Fact]
-        public void CalculateScore_SpareExtraThrowLastFrameInputTotalScore_Equals270()
-        {
-            var expected = 270;
-            var rollsMock = new [] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 5, 5, 5 };
-            ScoreCalculator calculator = new ScoreCalculator(rollsMock);
-
-            //act
-            var total = calculator.CalculateScore();
-
-            //assert
-            Assert.Equal(expected, total);
-        }
-
-        [Fact]
-        public void CalculateScore_MissEveryThrowInputTotalScore_Equals0()
-        {
-            var expected = 0;
-            var rollsMock = new [] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            ScoreCalculator calculator = new ScoreCalculator(rollsMock);
-
-            //act
-            var total = calculator.CalculateScore();
-
-            //assert
-            Assert.Equal(expected, total);
-        }
-
-        [Fact]
-        public void CalculateScore_StrikeExtraThrowLastFrameInputTotalScore_Equals60()
-        {
-            var expected = 60;
-            var rollsMock = new [] { 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 10, 2, 3 };
-            ScoreCalculator calculator = new ScoreCalculator(rollsMock);
-
-            //act
-            var total = calculator.CalculateScore();
-
-            //assert
-            Assert.Equal(expected, total);
-        }
+        public static IEnumerable<object[]> ExampleInput =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    90,
+                    new[] { 2, 3, 5, 4, 9, 1, 2, 5, 3, 2, 4, 2, 3, 3, 4, 6, 10, 3, 2 }
+                }
+            };
+        public static IEnumerable<object[]> OnlySpares =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    150,
+                    new[] { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }
+                }
+            };
+        public static IEnumerable<object[]> OnlyStrikes =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    300,
+                    new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 }
+                }
+            };
+        public static IEnumerable<object[]> SpareLastFrame =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    270,
+                    new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 5, 5, 5 }
+                }
+            };
+        public static IEnumerable<object[]> StrikeLastFrame =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    60,
+                    new[] { 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 10, 2, 3 },
+                }
+            };
+        public static IEnumerable<object[]> OnlyMisses =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    0,
+                    new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+                }
+            };
+        public static IEnumerable<object[]> NormalRolls =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    80,
+                    new[] { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 }
+                }
+            };
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace BowlingScore
+﻿namespace BowlingScore.Interfaces
 {
     public interface IFramesBuilder
     {

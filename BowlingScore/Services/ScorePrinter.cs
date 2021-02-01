@@ -1,24 +1,21 @@
-﻿using System;
+﻿using BowlingScore.Interfaces;
 
 namespace BowlingScore.Services
 {
-    public class ScorePrinter : IScorePrinter
+    public class ScorePrinter
     {
-        private IScoreCalculator _calculator;
-        private IFramesBuilder _framesBuilder;
+        private readonly IScoreCalculator _calculator;
+        private readonly IFramesBuilder _framesBuilder;
         public ScorePrinter(IScoreCalculator calculator, IFramesBuilder framesBuilder)
         {
             _calculator = calculator;
             _framesBuilder = framesBuilder;
         }
-        public void Print()
+        public string Print()
         {
             var totalScore = _calculator.CalculateScore();
             var scoreBoard = _framesBuilder.CreateScoreboard(totalScore);
-            Console.WriteLine($"--------");
-            Console.WriteLine(scoreBoard);
-            Console.WriteLine($"Total: {totalScore}");
+            return scoreBoard;
         }
-
     }
 }
